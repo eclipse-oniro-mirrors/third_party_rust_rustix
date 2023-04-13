@@ -1,0 +1,48 @@
+# Copyright (c) 2023 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/ohos.gni")
+
+ohos_cargo_crate("lib") {
+  crate_name = "rustix"
+  crate_type = "rlib"
+  crate_root = "src/lib.rs"
+
+  sources = [ "src/lib.rs" ]
+  edition = "2018"
+  cargo_pkg_version = "0.36.8"
+  cargo_pkg_authors = "Dan Gohman <dev@sunfishcode.online>,  Jakub Konka <kubkon@jakubkonka.com>"
+  cargo_pkg_name = "rustix"
+  cargo_pkg_description =
+      "Safe Rust bindings to POSIX/Unix/Linux/Winsock2-like syscalls"
+  deps = [
+    "//third_party/rust/crates/bitflags:lib",
+    "//third_party/rust/crates/io-lifetimes:lib",
+    "//third_party/rust/crates/libc:lib",
+    "//third_party/rust/crates/linux-raw-sys:lib",
+  ]
+  features = [
+    "io-lifetimes",
+    "libc",
+    "std",
+    "use-libc-auxv",
+    "termios",
+  ]
+  rustenv = [ string_join("", [ "CARGO_CFG_TARGET_OS=linux" ]) ]
+  rustenv += [ string_join("", [ "CARGO_CFG_TARGET_ARCH=x86_64" ]) ]
+  rustenv += [ string_join("", [ "CARGO_CFG_TARGET_POINTER_WIDTH=64" ]) ]
+  rustenv += [ string_join("", [ "CARGO_CFG_TARGET_ENDIAN=little" ]) ]
+  build_root = "build.rs"
+  build_sources = [ "build.rs" ]
+  build_script_outputs = [ "librust_out.rmeta" ]
+}
