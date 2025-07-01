@@ -21,7 +21,7 @@ if (host_os != "linux" || host_cpu != "arm64") {
 
     sources = [ "src/lib.rs" ]
     edition = "2018"
-    cargo_pkg_version = "0.36.8"
+    cargo_pkg_version = "0.36.16"
     cargo_pkg_authors = "Dan Gohman <dev@sunfishcode.online>,  Jakub Konka <kubkon@jakubkonka.com>"
     cargo_pkg_name = "rustix"
     cargo_pkg_description =
