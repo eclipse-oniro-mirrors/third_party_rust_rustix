@@ -26,7 +26,7 @@ fn main() {
     let arch = var("CARGO_CFG_TARGET_ARCH").unwrap();
     let asm_name = format!("{}/{}.s", OUTLINE_PATH, arch);
     let asm_name_present = std::fs::metadata(&asm_name).is_ok();
-    let os_name = var("CARGO_CFG_TARGET_OS").unwrap();
+    let target_os = var("CARGO_CFG_TARGET_OS").unwrap();
     let pointer_width = var("CARGO_CFG_TARGET_POINTER_WIDTH").unwrap();
     let endian = var("CARGO_CFG_TARGET_ENDIAN").unwrap();
 
@@ -69,7 +69,7 @@ fn main() {
     // install the toolchain for it.
     if feature_use_libc
         || cfg_use_libc
-        || os_name != "linux"
+        || target_os != "linux"
         || !asm_name_present
         || is_unsupported_abi
         || miri
@@ -106,7 +106,17 @@ fn main() {
         use_feature("thumb_mode");
     }
 
+    if target_os == "wasi" {
+        use_feature_or_nothing("wasi_ext");
+    }
     println!("cargo:rerun-if-env-changed=CARGO_CFG_RUSTIX_USE_EXPERIMENTAL_ASM");
+    println!("cargo:rerun-if-env-changed=CARGO_CFG_RUSTIX_USE_LIBC");
+
+    // Rerun this script if any of our features or configuration flags change,
+    // or if the toolchain we used for feature detection changes.
+    println!("cargo:rerun-if-env-changed=CARGO_FEATURE_USE_LIBC");
+    println!("cargo:rerun-if-env-changed=CARGO_FEATURE_RUSTC_DEP_OF_STD");
+    println!("cargo:rerun-if-env-changed=CARGO_CFG_MIRI");
 }
 
 /// Link in the desired version of librustix_outline_{arch}.a, containing the
@@ -187,7 +197,14 @@ fn can_compile<T: AsRef<str>>(test: T) -> bool {
     let rustc = var("RUSTC").unwrap();
     let target = var("TARGET").unwrap();
 
-    let mut cmd = if let Ok(wrapper) = var("CARGO_RUSTC_WRAPPER") {
+    // Use `RUSTC_WRAPPER` if it's set, unless it's set to an empty string,
+    // as documented [here].
+    // [here]: https://doc.rust-lang.org/cargo/reference/environment-variables.html#environment-variables-cargo-reads
+    let wrapper = var("RUSTC_WRAPPER")
+        .ok()
+        .and_then(|w| if w.is_empty() { None } else { Some(w) });
+
+    let mut cmd = if let Some(wrapper) = wrapper {
         let mut cmd = std::process::Command::new(wrapper);
         // The wrapper's first argument is supposed to be the path to rustc.
         cmd.arg(rustc);

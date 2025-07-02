@@ -3,7 +3,7 @@
     "Name": "rustix",
     "License": "Apache-2.0_WITH_LLVM-exception, Apache License 2.0, MIT",
     "License File": "LICENSE-Apache-2.0_WITH_LLVM-exception, LICENSE-APACHE, LICENSE-MIT",
-    "Version Number": "0.36.8",
+    "Version Number": "0.36.16",
     "Owner": "fangting12@huawei.com",
     "Upstream URL": "https://github.com/bytecodealliance/rustix",
     "Description": "A Rust library that provides support for working with UTF-8 encoded strings."
