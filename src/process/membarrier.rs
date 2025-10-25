@@ -48,7 +48,7 @@ impl MembarrierQuery {
     pub fn contains_command(self, cmd: MembarrierCommand) -> bool {
         // Safety: `MembarrierCommand` is an enum that only contains values
         // also valid in `MembarrierQuery`.
-        self.contains(unsafe { Self::from_bits_unchecked(cmd as _) })
+        self.contains( unsafe { Self::from_bits_retain(cmd as _) } )
     }
 }
 

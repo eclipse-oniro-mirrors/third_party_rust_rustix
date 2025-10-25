@@ -59,7 +59,7 @@ pub(crate) fn membarrier_query() -> MembarrierQuery {
                 // contains "source of truth" valid bits.
                 //
                 // [here]: https://github.com/bitflags/bitflags/pull/207#issuecomment-671668662
-                MembarrierQuery::from_bits_unchecked(query)
+                MembarrierQuery::from_bits_retain(query)
             }
             Err(_) => MembarrierQuery::empty(),
         }
