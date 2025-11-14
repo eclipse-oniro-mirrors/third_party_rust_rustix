@@ -83,7 +83,7 @@ bitflags! {
 
 bitflags! {
     /// `EPOLL*` for use with [`Epoll::add`].
-    #[derive(Default)]
+    #[derive(Default, Copy, Clone)]
     pub struct EventFlags: u32 {
         /// `EPOLLIN`
         const IN = linux_raw_sys::general::EPOLLIN as u32;
